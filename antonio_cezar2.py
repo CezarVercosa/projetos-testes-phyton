@@ -1,16 +1,17 @@
-import requests
+import requests, os
 from pycep_correios import get_address_from_cep, WebService, exceptions # Comando para instalar a biblioteca: pip install pycep-correios
 
 cep = str(input("Digite seu cep: "))
 def getTemperature(ceparg):
     try:
-        address = get_address_from_cep(cep, webservice=WebService.APICEP)
+        address = get_address_from_cep(ceparg, webservice=WebService.APICEP)
         re = requests.get(f"https://weather.contrateumdev.com.br/api/weather/city/?city={address['cidade']}")
-        print("CEP: ", address["cep"])
-        print("Cidade: ", address["cidade"])
-        print("Rua: ", address["logradouro"])
-        print("Bairro: ", address["bairro"])
-        print("Temperatura: ", round(re.json()['main']['temp']),"ºC")
+        cep = "Cep: " + address["cep"]
+        cidade = "Cidade: " + address["cidade"]
+        rua = "Rua: " + address["logradouro"]
+        bairro ="Bairro: " + address["bairro"]
+        temp = f"Temperatura: {round(re.json()['main']['temp'])}"
+        return cep, cidade, rua, bairro, str(temp).replace('(', "").replace(')', "") + "ºC"
     except exceptions.InvalidCEP as eic:
         print("Cep Invalido.")
 
@@ -28,5 +29,8 @@ def getTemperature(ceparg):
 
     except exceptions.BaseException as e:
         print("Formato do cep invalido, digite somente números.")    
-getTemperature(cep)
+temp = getTemperature(cep)
+os.system("cls")
+for i in temp:
+    print(i)
 
