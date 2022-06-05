@@ -1,17 +1,18 @@
 import requests, os
-from pycep_correios import get_address_from_cep, WebService, exceptions # Comando para instalar a biblioteca: pip install pycep-correios
+from pycep_correios import get_address_from_cep, WebService, exceptions #Comando para instalar a biblioteca: pip3 install pycep-correios
 
-cep = str(input("Digite seu cep: "))
 def getTemperature(ceparg):
     try:
+        os.system("cls")
         address = get_address_from_cep(ceparg, webservice=WebService.APICEP)
         re = requests.get(f"https://weather.contrateumdev.com.br/api/weather/city/?city={address['cidade']}")
         cep = "Cep: " + address["cep"]
         cidade = "Cidade: " + address["cidade"]
         rua = "Rua: " + address["logradouro"]
         bairro ="Bairro: " + address["bairro"]
-        temp = f"Temperatura: {round(re.json()['main']['temp'])}"
-        return cep, cidade, rua, bairro, str(temp).replace('(', "").replace(')', "") + "ºC"
+        temp = f"Temperatura: {round(re.json()['main']['temp'])}ºC".replace('(', "").replace(')', "")
+        print(f"{cep}\n{cidade}\n{rua}\n{bairro}\n{temp.replace('(', '').replace(')', '')}")
+        return temp 
     except exceptions.InvalidCEP as eic:
         print("Cep Invalido.")
 
@@ -29,8 +30,4 @@ def getTemperature(ceparg):
 
     except exceptions.BaseException as e:
         print("Formato do cep invalido, digite somente números.")    
-temp = getTemperature(cep)
-os.system("cls")
-for i in temp:
-    print(i)
-
+getTemperature("95020-360") #Coloque o cep dentro da string, o uso de hífen é opcional.
